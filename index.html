@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soul Parking Management System</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --dark: #2b2f38;
+        --dark-2: #363b46;
+        --orange: #f5a623;
+        --text-muted: #9aa0ab;
+        --green: #3ec97c;
+        --purple: #8b6bd8;
+        --blue: #4a90d9;
+        --red: #e05c5c;
+      }
+      body {
+        background: #eef1f5;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+          sans-serif;
+        font-size: 14px;
+        color: #333;
+      }
+      /* Sidebar */
+      .sidebar {
+        width: 230px;
+        min-height: 100vh;
+        background: var(--dark);
+        color: #c7cad1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+      }
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 18px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .sidebar-brand .icon {
+        background: var(--orange);
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+      .sidebar-brand .brand-text {
+        line-height: 1.1;
+      }
+      .sidebar-brand .brand-text b {
+        font-style: italic;
+        font-size: 15px;
+        color: #fff;
+        display: block;
+      }
+      .sidebar-brand .brand-text small {
+        font-size: 10px;
+        color: #8b909c;
+        letter-spacing: 0.3px;
+      }
+      .sidebar .nav-link {
+        color: #c7cad1;
+        padding: 10px 16px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .sidebar .nav-link i.leading {
+        width: 16px;
+        text-align: center;
+        font-size: 12px;
+      }
+      .sidebar .nav-link.active {
+        background: var(--orange);
+        color: #fff;
+      }
+      .sidebar .nav-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        text-decoration: none;
+      }
+      .sidebar .nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .sidebar .caret {
+        font-size: 10px;
+        transition: transform 0.2s;
+      }
+      .sidebar .collapse.show ~ .caret,
+      .sidebar .nav-header[aria-expanded="true"] .caret {
+        transform: rotate(180deg);
+      }
+      .sidebar .submenu .nav-link {
+        padding-left: 38px;
+        font-size: 12.5px;
+        color: #9aa0ab;
+      }
+      .sidebar .submenu .nav-link:hover {
+        color: #fff;
+      }
+      .sidebar-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 10px;
+      }
+
+      /* Main content */
+      .main-content {
+        margin-left: 230px;
+      }
+      .topbar {
+        background: var(--dark-2);
+        color: #fff;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .topbar .hide-menu {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #c7cad1;
+        cursor: pointer;
+      }
+      .topbar .right-area {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .topbar select.form-control {
+        width: auto;
+        background: var(--dark);
+        color: #fff;
+        border: 1px solid #4a4f5a;
+        font-size: 13px;
+        height: 34px;
+      }
+      .topbar .btn-add {
+        background: var(--orange);
+        border: none;
+        color: #fff;
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .topbar .user-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .topbar .user-box img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .topbar .user-box .u-name {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+      .topbar .user-box .u-role {
+        font-size: 11px;
+        color: #9aa0ab;
+      }
+
+      .page-body {
+        padding: 28px 24px;
+      }
+      .page-title {
+        font-weight: 700;
+        font-size: 20px;
+        color: #2b2f38;
+        margin-bottom: 22px;
+      }
+
+      .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 120px;
+      }
+      .stat-card .label {
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        color: #9aa0ab;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .stat-card .value {
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .stat-card .delta {
+        font-size: 11px;
+        margin-top: 8px;
+      }
+      .stat-card .delta .amount {
+        font-weight: 700;
+      }
+      .stat-card .icon-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .card-kedatangan .value {
+        color: var(--green);
+      }
+      .card-kedatangan .icon-circle {
+        background: #e6f9ee;
+        color: var(--green);
+      }
+      .card-kedatangan .amount {
+        color: var(--green);
+      }
+
+      .card-p2p-lama .value {
+        color: var(--purple);
+      }
+      .card-p2p-lama .icon-circle {
+        background: #f1ecfb;
+        color: var(--purple);
+      }
+      .card-p2p-lama .amount {
+        color: var(--green);
+      }
+
+      .card-p2p-baru .value {
+        color: var(--blue);
+      }
+      .card-p2p-baru .icon-circle {
+        background: #eaf2fb;
+        color: var(--blue);
+      }
+      .card-p2p-baru .amount {
+        color: var(--red);
+      }
+
+      .card-keluar .value {
+        color: var(--red);
+      }
+      .card-keluar .icon-circle {
+        background: #fbeaea;
+        color: var(--red);
+      }
+      .card-keluar .amount {
+        color: var(--red);
+      }
+
+      @media (max-width: 991px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.2s;
+          z-index: 1050;
+        }
+        .sidebar.show {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="icon"><i class="fa-solid fa-square-parking"></i></div>
+        <div class="brand-text">
+          <b>Soul Parking</b>
+          <small>MANAGEMENT SYSTEM</small>
+        </div>
+      </div>
+
+      <ul class="nav flex-column pt-2">
+        <li class="nav-item">
+          <a class="nav-link active" href="#"
+            ><i class="leading fa-solid fa-gauge"></i> Dashboard</a
+          >
+        </li>
+
+        <!-- Pelaporan -->
+        <li class="nav-item">
+          <a
+            class="nav-link nav-header"
+            data-toggle="collapse"
+            href="#menuPelaporan"
+            role="button"
+            aria-expanded="true"
+          >
+            <span
+              ><i class="leading fa-solid fa-file-lines"></i> Pelaporan</span
+            >
+            <i class="fa-solid fa-chevron-up caret"></i>
+          </a>
+          <div class="collapse show submenu" id="menuPelaporan">
+            <a class="nav-link" href="#">Laporan Trafik</a>
+            <a class="nav-link" href="#">Laporan Pendapatan</a>
+            <a class="nav-link" href="#">Pengeduan</a>
+            <a class="nav-link" href="#">Laporan Member</a>
+            <a class="nav-link" href="#">Laporan GasKir</a>
+            <a class="nav-link" href="#">Laporan Aplikasi</a>
+          </div>
+        </li>
+
+        <!-- Pengaturan Lokasi -->
+        <li class="nav-item">
+          <a
+            class="nav-link nav-header"
+            data-toggle="collapse"
+            href="#menuLokasi"
+            role="button"
+            aria-expanded="true"
+          >
+            <span
+              ><i class="leading fa-solid fa-gear"></i> Pengaturan Lokasi</span
+            >
+            <i class="fa-solid fa-chevron-up caret"></i>
+          </a>
+          <div class="collapse show submenu" id="menuLokasi">
+            <a class="nav-link" href="#">Info Loker</a>
+            <a class="nav-link" href="#">Tarif</a>
+            <a class="nav-link" href="#">GasKir</a>
+            <a class="nav-link" href="#">Shift</a>
+            <a class="nav-link" href="#">Produk</a>
+            <a class="nav-link" href="#">Pemutihan Kendaraan</a>
+            <a class="nav-link" href="#">Aktivasi Member</a>
+            <a class="nav-link" href="#">Pengaturan Pengguna</a>
+          </div>
+        </li>
+
+        <!-- Sistem Admin -->
+        <li class="nav-item">
+          <a
+            class="nav-link nav-header"
+            data-toggle="collapse"
+            href="#menuAdmin"
+            role="button"
+            aria-expanded="true"
+          >
+            <span
+              ><i class="leading fa-solid fa-user-shield"></i> Sistem
+              Admin</span
+            >
+            <i class="fa-solid fa-chevron-up caret"></i>
+          </a>
+          <div class="collapse show submenu" id="menuAdmin">
+            <a class="nav-link" href="#">Loker</a>
+            <a class="nav-link" href="#">Pengguna</a>
+            <a class="nav-link" href="#">Resolution Center</a>
+            <a class="nav-link" href="#">Hardware</a>
+          </div>
+        </li>
+
+        <li class="sidebar-bottom"></li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"
+            ><i class="leading fa-solid fa-circle-info"></i> Sistem Admin</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"
+            ><i class="leading fa-solid fa-right-from-bracket"></i> Keluar</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="hide-menu" id="toggleSidebar">
+          <i class="fa-solid fa-angle-left"></i> Sembunyikan Menu
+        </div>
+        <div class="right-area">
+          <select class="form-control">
+            <option>DKI Jakarta</option>
+            <option>Jawa Barat</option>
+            <option>Jawa Timur</option>
+          </select>
+          <button class="btn-add"><i class="fa-solid fa-plus"></i></button>
+          <div class="user-box">
+            <img src="https://i.pravatar.cc/72?img=13" alt="user" />
+            <div>
+              <div class="u-name">Husein Damar</div>
+              <div class="u-role">Super Admin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <div class="page-title">Dashboard</div>
+
+        <div class="row">
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-kedatangan">
+              <div>
+                <div class="label">KEDATANGAN</div>
+                <div class="value">2.500</div>
+                <div class="delta">
+                  <span class="amount">+50%</span> dari minggu lalu
+                </div>
+              </div>
+              <div class="icon-circle">
+                <i class="fa-solid fa-arrow-left"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-p2p-lama">
+              <div>
+                <div class="label">P2P LAMA</div>
+                <div class="value">2.000</div>
+                <div class="delta">
+                  <span class="amount">+28%</span> dari minggu lalu
+                </div>
+              </div>
+              <div class="icon-circle"><i class="fa-solid fa-rotate"></i></div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-p2p-baru">
+              <div>
+                <div class="label">P2P BARU</div>
+                <div class="value">500</div>
+                <div class="delta">
+                  <span class="amount">-5%</span> dari minggu lalu
+                </div>
+              </div>
+              <div class="icon-circle">
+                <i class="fa-solid fa-user-plus"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card card-keluar">
+              <div>
+                <div class="label">KELUAR</div>
+                <div class="value">1.500</div>
+                <div class="delta">
+                  <span class="amount">-15%</span> dari minggu lalu
+                </div>
+              </div>
+              <div class="icon-circle">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <script>
+      $(function () {
+        $("#toggleSidebar").on("click", function () {
+          $("#sidebar").toggleClass("show");
+          if ($(".main-content").css("margin-left") !== "0px") {
+            $(".main-content").css("margin-left", "0px");
+            $("#sidebar").css("transform", "translateX(0)");
+          } else {
+            $(".main-content").css("margin-left", "230px");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
